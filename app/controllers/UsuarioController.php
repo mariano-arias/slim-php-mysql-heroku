@@ -4,21 +4,58 @@ require_once './interfaces/IApiUsable.php';
 
 class UsuarioController extends Usuario implements IApiUsable
 {
-    public function CargarUno($request, $response, $args)
-    {
+  
+  public function CargarUno($request, $response, $args)
+  {
+        $sectores = ["bartender", "cervecero", "cocinero", "mozo", "socio"];
+        $flag = false;
+
         $parametros = $request->getParsedBody();
+//var_dump($parametros);
+        if(isset($parametros['username']) && isset($parametros['clave']) 
+            && isset($parametros['apellido']) && isset($parametros['nombre']) && isset($parametros['sector']) 
+            && !empty($parametros['username']) && !empty($parametros['clave'])
+            && !empty($parametros['apellido']) && !empty($parametros['nombre']) && !empty($parametros['sector']))
+        {
 
-        $usuario = $parametros['usuario'];
-        $clave = $parametros['clave'];
+          foreach ($sectores as $sec)
+          {
+            if($parametros['sector']===$sec)
+            {
+              $flag = true;
+            }
+          }
 
-        // Creamos el usuario
-        $usr = new Usuario();
-        $usr->usuario = $usuario;
-        $usr->clave = $clave;
-        $usr->crearUsuario();
-
-        $payload = json_encode(array("mensaje" => "Usuario creado con exito"));
-
+          if($flag)
+          {
+            if(!Usuario::obtenerUsuarioByUsername(trim($parametros['username'])))
+            {
+              $usr = new Usuario();
+              // Creamos el usuario
+              $usr->clave = trim($parametros['clave']);
+              $usr->usuario = trim($parametros['username']);
+              $usr->nombre =trim($parametros['nombre']);
+              $usr->apellido =trim($parametros['apellido']);
+              $usr->operaciones = 0;
+              $usr->sector =trim($parametros['sector']);
+              $usr->estado = 1;
+              $id = $usr->crearUsuario();
+              $payload = json_encode(array("mensaje" => "Usuario creado con exitosssss! Su numero de identificacion es: ".$id));
+            }
+            else
+            {
+              $payload = json_encode(array("mensaje" => "UserName ya existe, elija otro o ingrese con su pass"));
+            }
+          }
+          else
+          {
+            $payload = json_encode(array("mensaje" => "Sector solo puede ser uno habilitado"));
+          }
+        }
+        else
+        {
+          $payload = json_encode(array("mensaje" => "Debe completar todos los datos"));
+        }
         $response->getBody()->write($payload);
         return $response
           ->withHeader('Content-Type', 'application/json');
@@ -28,7 +65,19 @@ class UsuarioController extends Usuario implements IApiUsable
     {
         // Buscamos usuario por nombre
         $usr = $args['usuario'];
-        $usuario = Usuario::obtenerUsuario($usr);
+        $usuario = Usuario::obtenerUsuarioByUsername($usr);
+        $payload = json_encode($usuario);
+
+        $response->getBody()->write($payload);
+        return $response
+          ->withHeader('Content-Type', 'application/json');
+    }
+
+    public function TraerUnoById($request, $response, $args)
+    {
+        // Buscamos usuario por nombre
+        $usr = $args['id'];
+        $usuario = Usuario::obtenerUsuarioById($usr);
         $payload = json_encode($usuario);
 
         $response->getBody()->write($payload);
@@ -50,8 +99,9 @@ class UsuarioController extends Usuario implements IApiUsable
     {
         $parametros = $request->getParsedBody();
 
-        $nombre = $parametros['nombre'];
-        Usuario::modificarUsuario($nombre);
+        $userId = $parametros['usuarioId'];
+        $estado=$parametros['estado'];
+        Usuario::modificarUsuario($userId, $estado);
 
         $payload = json_encode(array("mensaje" => "Usuario modificado con exito"));
 
@@ -72,5 +122,17 @@ class UsuarioController extends Usuario implements IApiUsable
         $response->getBody()->write($payload);
         return $response
           ->withHeader('Content-Type', 'application/json');
+    }
+
+    public function ListarPorSector($request, $response, $args){
+
+      $sector = $args['sector'];
+var_dump($sector);
+      $lista= Usuario::Listar($sector);
+      $payload = json_encode(array("listaUsuario" => $lista));
+      $response->getBody()->write($payload);
+      return $response
+        ->withHeader('Content-Type', 'application/json');
+
     }
 }

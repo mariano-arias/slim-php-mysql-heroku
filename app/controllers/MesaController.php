@@ -4,20 +4,19 @@ require_once './interfaces/IApiUsable.php';
 
 class MesaController extends Mesa implements IApiUsable{
     
-    public function CargarUno($request, $response, $args)
-    {
+   public $estados = ['esperando', 'comiento', 'pagando', 'cerrada'];
+  
+  public function CargarUno($request, $response, $args)
+  {
+
         $parametros = $request->getParsedBody();
 
-        $usuario = $parametros['usuario'];
-        $clave = $parametros['clave'];
-
-        // Creamos el usuario
-        $usr = new Usuario();
-        $usr->usuario = $usuario;
-        $usr->clave = $clave;
-        $usr->crearUsuario();
-
-        $payload = json_encode(array("mensaje" => "Usuario creado con exito"));
+        $mesa = new Mesa();
+        $permitted_chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
+        $mesa->id =  substr(str_shuffle($permitted_chars), 0, 5);
+        $mesa->estado = 'esperando';
+        $mesa->crearMesa();
+        $payload = json_encode(array("mensaje" => "Mesa creada con exito. Mesa Codigo: ". $mesa->id. " - Estado: ".$mesa->estado));
 
         $response->getBody()->write($payload);
         return $response
@@ -26,10 +25,10 @@ class MesaController extends Mesa implements IApiUsable{
 
     public function TraerUno($request, $response, $args)
     {
-        // Buscamos usuario por nombre
-        $usr = $args['usuario'];
-        $usuario = Usuario::obtenerUsuario($usr);
-        $payload = json_encode($usuario);
+
+        $id = $args['mesa'];
+        $mesa = Mesa::obtenerMesaById($id);
+        $payload = json_encode($mesa);
 
         $response->getBody()->write($payload);
         return $response
@@ -38,8 +37,8 @@ class MesaController extends Mesa implements IApiUsable{
 
     public function TraerTodos($request, $response, $args)
     {
-        $lista = Usuario::obtenerTodos();
-        $payload = json_encode(array("listaUsuario" => $lista));
+        $lista = Mesa::obtenerTodos();
+        $payload = json_encode(array("listaMesas" => $lista));
 
         $response->getBody()->write($payload);
         return $response
@@ -48,12 +47,30 @@ class MesaController extends Mesa implements IApiUsable{
     
     public function ModificarUno($request, $response, $args)
     {
+        $estados = ['esperando', 'comiento', 'pagando', 'cerrada'];
+        $flag = false;
         $parametros = $request->getParsedBody();
+       
+        $estado = $parametros['estado'];
+        $mesa = $parametros['id'];
+      
+        foreach ($estados as $est){
+            if($est === $estado){
+                  $flag = true;
+            }
+        }
 
-        $nombre = $parametros['nombre'];
-        Usuario::modificarUsuario($nombre);
+        if($flag){
+            if(Mesa::modificarMesaEstado($estado, $mesa)){
+                  $payload = json_encode(array("mensaje" => "Mesa estado modificado con exito"));
+            }else{
 
-        $payload = json_encode(array("mensaje" => "Usuario modificado con exito"));
+                  $payload = json_encode(array("mensaje" => "Codigo mesa no encontrado"));
+            }
+      }else{
+            $payload = json_encode(array("mensaje" => "Estado no valido"));
+      }
+
 
         $response->getBody()->write($payload);
         return $response
