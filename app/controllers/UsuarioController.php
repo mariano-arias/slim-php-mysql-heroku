@@ -49,7 +49,12 @@ class UsuarioController extends Usuario implements IApiUsable
           }
           else
           {
-            $payload = json_encode(array("mensaje" => "Sector solo puede ser uno habilitado"));
+            $validos ="";
+            for($i = 0; $i <count($sectores); $i++){
+              $validos = $validos . $sectores[$i]. " - ";
+        }
+            $payload = json_encode(array("mensaje" => "Sector solo puede ser uno habilitado: ".$validos));
+                       // $sectores[0]. " - ".$sectores[1]. " - ".$sectores[2]. " - ".$sectores[3]." - ".$sectores[4]));
           }
         }
         else
@@ -75,7 +80,6 @@ class UsuarioController extends Usuario implements IApiUsable
 
     public function TraerUnoById($request, $response, $args)
     {
-        // Buscamos usuario por nombre
         $usr = $args['id'];
         $usuario = Usuario::obtenerUsuarioById($usr);
         $payload = json_encode($usuario);

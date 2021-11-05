@@ -48,7 +48,7 @@ class Mesa
         $consulta = $objAccesoDatos->prepararConsulta(
             "SELECT id, estado FROM mesas WHERE id = :id");
         $consulta->bindValue(':id', $mesa, PDO::PARAM_STR);
-        //echo ($consulta->execute());
+        $consulta->execute();
 
         return $consulta->fetchObject('Mesa');
     }

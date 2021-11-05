@@ -34,7 +34,16 @@ class PedidoController extends Pedido implements IApiUsable{
 
     public function TraerUno($request, $response, $args)
     {
+    
+        // Buscamos producto por id
+        $id = $args['pedido'];
         
+        $pedido = Pedido::obtenerPedidoById($id);
+        $payload = json_encode($pedido);
+
+        $response->getBody()->write($payload);
+        return $response
+          ->withHeader('Content-Type', 'application/json');
     }
 
     public function TraerTodos($request, $response, $args)
@@ -51,10 +60,24 @@ class PedidoController extends Pedido implements IApiUsable{
     {
         $parametros = $request->getParsedBody();
 
-        $nombre = $parametros['nombre'];
- 
+        $id = $parametros['id'];
+        $idEmpleado = $parametros['idEmpleadoPreparacion'];
+        $estado = $parametros['estado'];
+        $tiempoEstimado = $parametros['tiempoEstimado'];
 
-        $payload = json_encode(array("mensaje" => "Usuario modificado con exito"));
+        $aux = Pedido::obtenerPedidoById($id);
+      
+        if($aux){
+          $aux->idEmpleadoPreparacion = $idEmpleado;
+          $aux->estado = $estado;
+          $aux->tiempoEstimado = $tiempoEstimado;
+          Pedido::ModificarUnoById($aux);
+
+          $payload = json_encode(array("mensaje" => "Pedido modificado con exito"));
+        }else{
+          $payload = json_encode(array("mensaje" => "Pedido no encontrado"));
+        }
+
 
         $response->getBody()->write($payload);
         return $response

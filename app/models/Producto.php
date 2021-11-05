@@ -32,16 +32,6 @@ class Producto
         return $consulta->fetchAll(PDO::FETCH_CLASS, 'Producto');
     }
 
-    public static function obtenerUsuarioByUsername($usuario)
-    {
-        $objAccesoDatos = AccesoDatos::obtenerInstancia();
-        $consulta = $objAccesoDatos->prepararConsulta(
-            "SELECT id, usuario, clave, apellido, nombre, sector, operaciones, estado FROM usuarios WHERE usuario = :usuario");
-        $consulta->bindValue(':usuario', $usuario, PDO::PARAM_STR);
-        $consulta->execute();
-
-        return $consulta->fetchObject('Usuario');
-    }
 
     public static function obtenerProductoById($id)
     {

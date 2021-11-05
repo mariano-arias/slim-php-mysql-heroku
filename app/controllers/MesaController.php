@@ -47,7 +47,7 @@ class MesaController extends Mesa implements IApiUsable{
     
     public function ModificarUno($request, $response, $args)
     {
-        $estados = ['esperando', 'comiento', 'pagando', 'cerrada'];
+        $estados = ['esperando', 'comiendo', 'pagando', 'cerrada'];
         $flag = false;
         $parametros = $request->getParsedBody();
        
@@ -61,14 +61,34 @@ class MesaController extends Mesa implements IApiUsable{
         }
 
         if($flag){
-            if(Mesa::modificarMesaEstado($estado, $mesa)){
-                  $payload = json_encode(array("mensaje" => "Mesa estado modificado con exito"));
-            }else{
-
+            $aux=Mesa::ObtenerMesaById($mesa);
+            // var_dump($mesa);
+            // var_dump($estado);
+            // var_dump($aux);
+            if($aux){
+                  if($aux->estado!=$estado)
+                  {
+                        if(Mesa::modificarMesaEstado($estado, $mesa)){
+                              $payload = json_encode(array("mensaje" => "Mesa estado modificado con exito"));
+                        }else{
+                              $payload = json_encode(array("mensaje" => "Ha habido un error"));
+                        }
+                  }else{
+                        $payload = json_encode(array("mensaje" => "Error - La mesa ".$mesa." ya está en estado: ".$estado));
+                  }
+            }
+            else
+            {
                   $payload = json_encode(array("mensaje" => "Codigo mesa no encontrado"));
             }
       }else{
-            $payload = json_encode(array("mensaje" => "Estado no valido"));
+            $validos = "";
+
+            for($i = 0; $i <count($estados); $i++){
+                  $validos = $validos . $estados[$i]. " - ";
+            }
+            $payload = json_encode(array("mensaje" => "Estado no valido. Estados validos: ". $validos));
+                              // $estados[0]." - ".$estados[1]." - ".$estados[2]." - ".$estados[3]));
       }
 
 
