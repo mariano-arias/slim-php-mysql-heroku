@@ -32,12 +32,17 @@ class Usuario
 
     public static function obtenerTodos()
     {
-        $objAccesoDatos = AccesoDatos::obtenerInstancia();
-        $consulta = $objAccesoDatos->prepararConsulta(
-            "SELECT id, usuario, clave, apellido, nombre, sector, operaciones, estado FROM usuarios");
-        $consulta->execute();
+        try{
 
-        return $consulta->fetchAll(PDO::FETCH_CLASS, 'Usuario');
+            $objAccesoDatos = AccesoDatos::obtenerInstancia();
+            $consulta = $objAccesoDatos->prepararConsulta(
+                "SELECT id, usuario, clave, apellido, nombre, sector, operaciones, estado FROM usuarios");
+                $consulta->execute();
+                
+                return $consulta->fetchAll(PDO::FETCH_CLASS, 'Usuario');
+            }catch(Exception $ex){
+                echo "Se ha producido un error.".$ex->getMessage();
+            }
     }
 
     public static function obtenerUsuarioByUsername($usuario)
