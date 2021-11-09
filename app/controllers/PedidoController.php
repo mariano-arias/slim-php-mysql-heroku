@@ -64,6 +64,7 @@ class PedidoController extends Pedido implements IApiUsable{
         $idEmpleado = $parametros['idEmpleadoPreparacion'];
         $estado = $parametros['estado'];
         $tiempoEstimado = $parametros['tiempoEstimado'];
+        $tiempoReal = $parametros['tiempoReal'];
 
         $aux = Pedido::obtenerPedidoById($id);
       
@@ -71,6 +72,8 @@ class PedidoController extends Pedido implements IApiUsable{
           $aux->idEmpleadoPreparacion = $idEmpleado;
           $aux->estado = $estado;
           $aux->tiempoEstimado = $tiempoEstimado;
+          $aux->tiempoReal = $tiempoReal;
+          
           Pedido::ModificarUnoById($aux);
 
           $payload = json_encode(array("mensaje" => "Pedido modificado con exito"));

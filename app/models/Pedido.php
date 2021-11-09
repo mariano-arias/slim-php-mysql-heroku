@@ -62,14 +62,24 @@ class Pedido
     {
         $objAccesoDato = AccesoDatos::obtenerInstancia();
 
-        $consulta = $objAccesoDato->prepararConsulta(
-            "UPDATE pedidos SET idEmpleadoPreparacion = :idEmpleadoPreparacion, estado = :estado, tiempoEstimado = :tiempoEstimado WHERE id = :id");
-            $consulta->bindValue(':id', $pedido->id, PDO::PARAM_STR);
-            $consulta->bindValue(':idEmpleadoPreparacion', $pedido->idEmpleadoPreparacion, PDO::PARAM_INT);
-            $consulta->bindValue(':estado', $pedido->estado, PDO::PARAM_STR);
-            $consulta->bindValue(':tiempoEstimado', $pedido->tiempoEstimado, PDO::PARAM_INT);
+        if($pedido->estado == 'en preparacion'){
 
-        $consulta->execute();
+            $consulta = $objAccesoDato->prepararConsulta(
+                "UPDATE pedidos SET idEmpleadoPreparacion = :idEmpleadoPreparacion, estado = :estado, tiempoEstimado = :tiempoEstimado WHERE id = :id");
+                $consulta->bindValue(':id', $pedido->id, PDO::PARAM_STR);
+                $consulta->bindValue(':idEmpleadoPreparacion', $pedido->idEmpleadoPreparacion, PDO::PARAM_INT);
+                $consulta->bindValue(':estado', $pedido->estado, PDO::PARAM_STR);
+                $consulta->bindValue(':tiempoEstimado', $pedido->tiempoEstimado, PDO::PARAM_INT);
+        }else if( $pedido->estado == 'listo'){
+            $consulta = $objAccesoDato->prepararConsulta(
+                "UPDATE pedidos SET idEmpleadoPreparacion = :idEmpleadoPreparacion, estado = :estado, tiempoRealizado = :tiempoRealizado WHERE id = :id");
+                $consulta->bindValue(':id', $pedido->id, PDO::PARAM_STR);
+                $consulta->bindValue(':idEmpleadoPreparacion', $pedido->idEmpleadoPreparacion, PDO::PARAM_INT);
+                $consulta->bindValue(':estado', $pedido->estado, PDO::PARAM_STR);
+                $consulta->bindValue(':tiempoRealizado', $pedido->tiempoRealizado, PDO::PARAM_INT);
+        }
+                
+                $consulta->execute();
     }
 }
 ?>

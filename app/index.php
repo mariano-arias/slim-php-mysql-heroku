@@ -17,6 +17,7 @@ require_once './controllers/UsuarioController.php';
 require_once './controllers/ProductoController.php';
 require_once './controllers/MesaController.php';
 require_once './controllers/PedidoController.php';
+require_once './controllers/LoginController.php';
 
 // Load ENV
 $dotenv = Dotenv\Dotenv::createImmutable(__DIR__);
@@ -39,6 +40,10 @@ $app->addBodyParsingMiddleware();
 $app->get('[/]', function (Request $request, Response $response) {    
   $response->getBody()->write("Slim Framework 4 PHP <br> Mariano Arias - Programacion 3 <br> UTN FRA - 2°C 2021");
     return $response;
+});
+
+$app->group('/login', function (RouteCollectorProxy $group){
+  $group->post('[/]', \UsuarioController::class . ':VerificarLogin');
 });
 
 $app->group('/usuarios', function (RouteCollectorProxy $group) {

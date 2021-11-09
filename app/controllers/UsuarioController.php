@@ -5,6 +5,39 @@ require_once './interfaces/IApiUsable.php';
 class UsuarioController extends Usuario implements IApiUsable
 {
   
+
+  public function VerificarLogin($request, $response, $args)
+  {
+
+      $parametros = $request->getParsedBody();
+
+      $usuario = $parametros['username'];
+      $clave = $parametros['password'];
+
+      $userIn = new Usuario();
+      $userIn->usuario = $usuario;
+      $userIn->clave = $clave;
+
+      //var_dump($userIn);
+      $usuario = Usuario::obtenerUsuarioByUsername($userIn->usuario);
+
+      if($usuario)
+      {
+        if(password_verify($userIn->clave, $usuario->clave))
+        {
+          $payload = json_encode(array("mensaje" => "Usuario logueado con exito"));
+        }else{
+          $payload = json_encode(array("mensaje" => "Usuario correcto, pass incorrecto"));
+        }
+
+      }else{
+        $payload = json_encode(array("mensaje" => "Usuario no encontrado"));
+      }
+          $response->getBody()->write($payload);
+          return $response
+            ->withHeader('Content-Type', 'application/json');
+  }
+  
   public function CargarUno($request, $response, $args)
   {
         $sectores = ["bartender", "cervecero", "cocinero", "mozo", "socio"];
