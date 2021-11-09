@@ -43,7 +43,7 @@ $app->get('[/]', function (Request $request, Response $response) {
 
 $app->group('/login', function (RouteCollectorProxy $group){
   $group->post('[/]', \UsuarioController::class . ':VerificarLogin');
-});
+})->add(Logger::class . ':LogOperacion');
 
 $app->group('/usuarios', function (RouteCollectorProxy $group) {
     $group->get('[/]', \UsuarioController::class . ':TraerTodos');
