@@ -18,14 +18,16 @@ class UsuarioController extends Usuario implements IApiUsable
       $userIn->usuario = $usuario;
       $userIn->clave = $clave;
 
-      //var_dump($userIn);
       $usuario = Usuario::obtenerUsuarioByUsername($userIn->usuario);
-
+// var_dump($usuario);
       if($usuario)
       {
         if(password_verify($userIn->clave, $usuario->clave))
         {
-          $payload = json_encode(array("mensaje" => "Usuario logueado con exito"));
+          $response->getBody()->write(AuthJWT::CrearToken($usuario));
+          return $response
+          ->withHeader('Content-Type', 'application/json');
+          //$payload = json_encode(array("mensaje" => "Usuario logueado con exito"));
         }else{
           $payload = json_encode(array("mensaje" => "Usuario correcto, pass incorrecto"));
         }
@@ -33,9 +35,9 @@ class UsuarioController extends Usuario implements IApiUsable
       }else{
         $payload = json_encode(array("mensaje" => "Usuario no encontrado"));
       }
-          $response->getBody()->write($payload);
-          return $response
-            ->withHeader('Content-Type', 'application/json');
+        $response->getBody()->write($payload);
+        return $response
+          ->withHeader('Content-Type', 'application/json');
   }
   
   public function CargarUno($request, $response, $args)

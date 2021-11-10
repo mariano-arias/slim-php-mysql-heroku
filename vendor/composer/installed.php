@@ -1,22 +1,22 @@
 <?php return array(
     'root' => array(
-        'pretty_version' => 'dev-main',
-        'version' => 'dev-main',
+        'pretty_version' => 'dev-develop',
+        'version' => 'dev-develop',
         'type' => 'library',
         'install_path' => __DIR__ . '/../../',
         'aliases' => array(),
-        'reference' => 'd262e2d08200fb77733e0d9c91b657fcb4cbd734',
+        'reference' => '050b042ec357980e190902fc9d8896aff20bb2a7',
         'name' => '__root__',
         'dev' => true,
     ),
     'versions' => array(
         '__root__' => array(
-            'pretty_version' => 'dev-main',
-            'version' => 'dev-main',
+            'pretty_version' => 'dev-develop',
+            'version' => 'dev-develop',
             'type' => 'library',
             'install_path' => __DIR__ . '/../../',
             'aliases' => array(),
-            'reference' => 'd262e2d08200fb77733e0d9c91b657fcb4cbd734',
+            'reference' => '050b042ec357980e190902fc9d8896aff20bb2a7',
             'dev_requirement' => false,
         ),
         'doctrine/inflector' => array(
@@ -38,12 +38,12 @@
             'dev_requirement' => false,
         ),
         'firebase/php-jwt' => array(
-            'pretty_version' => 'v4.0.0',
-            'version' => '4.0.0.0',
+            'pretty_version' => 'v5.5.1',
+            'version' => '5.5.1.0',
             'type' => 'library',
             'install_path' => __DIR__ . '/../firebase/php-jwt',
             'aliases' => array(),
-            'reference' => 'dccf163dc8ed7ed6a00afc06c51ee5186a428d35',
+            'reference' => '83b609028194aa042ea33b5af2d41a7427de80e6',
             'dev_requirement' => false,
         ),
         'graham-campbell/result-type' => array(

@@ -1,4 +1,4 @@
-<?php
+<?php //composer require firebase/php-jwt
 // Error Handling
 error_reporting(-1);
 ini_set('display_errors', 1);
@@ -13,6 +13,8 @@ use Slim\Routing\RouteContext;
 require __DIR__ . '/../vendor/autoload.php';
 require_once './db/AccesoDatos.php';
 require_once './middlewares/Logger.php';
+require_once './middlewares/AuthJWT.php';
+require_once './middlewares/MWValidacion.php';
 require_once './controllers/UsuarioController.php';
 require_once './controllers/ProductoController.php';
 require_once './controllers/MesaController.php';
@@ -43,36 +45,37 @@ $app->get('[/]', function (Request $request, Response $response) {
 
 $app->group('/login', function (RouteCollectorProxy $group){
   $group->post('[/]', \UsuarioController::class . ':VerificarLogin');
-});
+});//->add(Logger::class . ':LogOperacion');
 
 $app->group('/usuarios', function (RouteCollectorProxy $group) {
     $group->get('[/]', \UsuarioController::class . ':TraerTodos');
     $group->get('/{usuario}', \UsuarioController::class . ':TraerUno');
     //$group->get('/{sector}', \ProductoController::class . ':ListarPorSector');
-    $group->post('[/]', \UsuarioController::class . ':CargarUno');
     $group->put('[/]', \UsuarioController::class . ':ModificarUno');
     $group->delete('/{usuarioId}', \UsuarioController::class . ':BorrarUno');
-  });
+    $group->post('[/]', \UsuarioController::class . ':CargarUno')->Add(MWValidacion::class . ':ValidarSocio');
+  })->add(MWValidacion::class . ':ValidarToken');
 
 $app->group('/productos', function (RouteCollectorProxy $group) {
     $group->get('[/]', \ProductoController::class . ':TraerTodos');
     $group->get('/{idProducto}', \ProductoController::class . ':TraerUno');
     $group->post('[/]', \ProductoController::class . ':CargarUno');
     $group->put('[/]', \ProductoController::class . ':ModificarUno');
-  });
+  })->add(MWValidacion::class . ':ValidarToken');
 
 $app->group('/mesas', function (RouteCollectorProxy $group) {
     $group->get('[/]', \MesaController::class . ':TraerTodos');
     $group->get('/{mesa}', \MesaController::class . ':TraerUno');
     $group->post('[/]', \MesaController::class . ':CargarUno');
     $group->put('[/]', \MesaController::class . ':ModificarUno');
-  });
+  })->add(MWValidacion::class . ':ValidarToken');
+
 $app->group('/pedidos', function (RouteCollectorProxy $group) {
     $group->get('[/]', \PedidoController::class . ':TraerTodos');
     $group->get('/{pedido}', \PedidoController::class . ':TraerUno');
     $group->post('[/]', \PedidoController::class . ':CargarUno');
     $group->put('[/]', \PedidoController::class . ':ModificarUno');
-  });
+  })->add(MWValidacion::class . ':ValidarToken');
 
 
 $app->addBodyParsingMiddleware();
