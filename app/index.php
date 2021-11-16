@@ -14,7 +14,7 @@ use Slim\Routing\RouteContext;
 
 require __DIR__ . '/../vendor/autoload.php';
 require_once './db/AccesoDatos.php';
-//require_once './middlewares/Logger.php';
+require_once './middlewares/LoggerMW.php';
 require_once './middlewares/AuthJWT.php';
 require_once './middlewares/ValidacionMW.php';
 require_once './controllers/UsuarioController.php';
@@ -49,14 +49,14 @@ $app->get('[/]', function (Request $request, Response $response) {
 
 $app->group('/login', function (RouteCollectorProxy $group){
   $group->post('[/]', \UsuarioController::class . ':VerificarLogin');
-});//->add(Logger::class . ':LogOperacion');
+})->add(LoggerMW::class . ':LogOperacion');
 
 $app->group('/usuarios', function (RouteCollectorProxy $group) {
     $group->get('/{usuario}', \UsuarioController::class . ':TraerUno');
     $group->get('[/]', \UsuarioController::class . ':TraerTodos');
     $group->post('[/]', \UsuarioController::class . ':CargarUno')->Add(ValidacionMW::class . ':ValidarSocio');
     $group->put('[/]', \UsuarioController::class . ':ModificarUno')->Add(ValidacionMW::class . ':ValidarSocio');
-    $group->delete('/{usuarioId}', \UsuarioController::class . ':BorrarUno')->Add(ValidacionMW::class . ':ValidarSocio');
+   // $group->delete('/{usuarioId}', \UsuarioController::class . ':BorrarUno')->Add(ValidacionMW::class . ':ValidarSocio');
   })->add(ValidacionMW::class . ':ValidarToken');
 
 $app->group('/productos', function (RouteCollectorProxy $group) {

@@ -11,10 +11,10 @@ class PedidoController extends Pedido implements IApiUsable{
     public function CargarUno($request, $response, $args)
     {
         $parametros = $request->getParsedBody();
-
         $pedido = new Pedido();
         $permitted_chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $pedido->id =  substr(str_shuffle($permitted_chars), 0, 5);
+
         $pedido->idMesa = $parametros['idMesa'];
         $pedido->idMozo= PedidoController::GetMozoIdByToken($request);
         $pedido->clienteNombre= $parametros['clienteNombre'];

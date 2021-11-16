@@ -151,16 +151,16 @@ class UsuarioController extends Usuario implements IApiUsable
 
     public function BorrarUno($request, $response, $args)
     {
-        $parametros = $request->getParsedBody();
+        // $parametros = $request->getParsedBody();
 
-        $usuarioId = $parametros['usuarioId'];
-        Usuario::borrarUsuario($usuarioId);
+        // $usuarioId = $parametros['usuarioId'];
+        // Usuario::borrarUsuario($usuarioId);
 
-        $payload = json_encode(array("mensaje" => "Usuario borrado con exito"));
+        // $payload = json_encode(array("mensaje" => "Usuario borrado con exito"));
 
-        $response->getBody()->write($payload);
-        return $response
-          ->withHeader('Content-Type', 'application/json');
+        // $response->getBody()->write($payload);
+        // return $response
+        //   ->withHeader('Content-Type', 'application/json');
     }
 
     public function ListarPorSector($request, $response, $args){
