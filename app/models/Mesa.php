@@ -44,6 +44,8 @@ class Mesa
     }
 
     public function obtenerMesaById($mesa){
+       // var_dump($mesa);
+        
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
         $consulta = $objAccesoDatos->prepararConsulta(
             "SELECT id, estado FROM mesas WHERE id = :id");
@@ -52,6 +54,18 @@ class Mesa
 
         return $consulta->fetchObject('Mesa');
     }
+
+    public static function obtenerMesaLibre(){
+        // var_dump($mesa);
+         
+         $objAccesoDatos = AccesoDatos::obtenerInstancia();
+         $consulta = $objAccesoDatos->prepararConsulta(
+             "SELECT * FROM mesas WHERE estado like 'cerrada'");
+         
+         $consulta->execute();
+ 
+         return $consulta->fetchAll(PDO::FETCH_CLASS, 'Mesa');
+     }
 
     public function modificarMesaEstado($estado, $mesa){
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
