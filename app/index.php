@@ -14,7 +14,7 @@ use Slim\Routing\RouteContext;
 
 require __DIR__ . '/../vendor/autoload.php';
 require_once './db/AccesoDatos.php';
-require_once './middlewares/Logger.php';
+//require_once './middlewares/Logger.php';
 require_once './middlewares/AuthJWT.php';
 require_once './middlewares/ValidacionMW.php';
 require_once './controllers/UsuarioController.php';
@@ -78,7 +78,8 @@ $app->group('/pedidos', function (RouteCollectorProxy $group) {
     $group->get('/{pedido}', \PedidoController::class . ':TraerUno');
     $group->post('[/]', \PedidoController::class . ':CargarUno')
       ->Add(ValidacionMW::class . ':ValidarMozo')
-      ->Add(ValidacionMW::class . ':ValidarMesa');
+      ->Add(ValidacionMW::class . ':ValidarMesa')
+      ->Add(ValidacionMW::class . ':ValidarPhoto');
     $group->put('[/]', \PedidoController::class . ':ModificarUno')->Add(ValidacionMW::class . ':ValidarSector');
   })->add(ValidacionMW::class . ':ValidarToken');
 

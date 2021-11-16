@@ -4,6 +4,7 @@ use Illuminate\Support\Arr;
 
 require_once './models/Pedido.php';
 require_once './interfaces/IApiUsable.php';
+require_once './managers/FileManager.php';
 
 class PedidoController extends Pedido implements IApiUsable{
     
@@ -19,33 +20,22 @@ class PedidoController extends Pedido implements IApiUsable{
         $pedido->clienteNombre= $parametros['clienteNombre'];
         $pedido->idProducto= $parametros['idProducto'];
         $pedido->cantidad= $parametros['cantidad'];
-
-        if ($_FILES["archivo"]["error"] > 0)
-        {
-           echo "Error: " . $_FILES["archivo"]["error"] . "<br />";
-        }
-      else
-        {
-           echo "Nombre: " . $_FILES["archivo"]["name"] . "<br />";
-           echo "Tipo: " . $_FILES["archivo"]["type"] . "<br />";
-           echo "Tamaño: ". $_FILES["archivo"]["size"]  . "<br />";
-           echo "Ruta: " . $_FILES["archivo"]["tmp_name"];
-        }
-        $dir_subida = './uploads/';
-        $fichero_subido = $dir_subida . basename($_FILES['fichero_usuario']['name']);
-
-echo '<pre>';
-if (move_uploaded_file($_FILES['fichero_usuario']['tmp_name'], $fichero_subido)) 
-
+        
         $pedido->precio =Producto::obtenerProductoById($pedido->idProducto)->precio * $pedido->cantidad;
         $pedido->sector =Producto::obtenerProductoById($pedido->idProducto)->sector;
 
         $pedido->estado = 'En espera';
-        
-        echo ($pedido->crearPedido());
+
+        $pedido->crearPedido();
 
         $mesa = new Mesa();
         $mesa = $mesa->modificarMesaEstado('esperando', $pedido->idMesa);
+
+        if (isset($_FILES["photo"])){
+          
+          $pedido->photoPath=FileManager::SaveFile($request, $pedido->id);
+          $pedido->SetPhotoPath();
+        }
 
         $payload = json_encode(array("mensaje" => "Pedido creado con exito. Su Codigo es de pedido es: ".$pedido->id));
 
@@ -76,7 +66,7 @@ if (move_uploaded_file($_FILES['fichero_usuario']['tmp_name'], $fichero_subido))
 
         $sector= AuthJWT::ObtenerData($token);
 
-        var_dump($sector);
+        //var_dump($sector);
         switch($sector)
         {
 

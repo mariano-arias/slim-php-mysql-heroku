@@ -12,7 +12,7 @@ class AuthJWT
         $ahora = time();
         $payload = array(
             'iat' => $ahora,
-            'exp' => $ahora + (60000),
+            'exp' => $ahora + (600000),
             'aud' => self::Aud(),
             'id' => $user->id,
             'sector' => $user->sector,
@@ -57,7 +57,6 @@ class AuthJWT
 
     public static function ObtenerData($token)
     {
-        //echo "obtengo data";
         return JWT::decode(
             $token,
             self::$claveSecreta,

@@ -16,7 +16,7 @@ class Pedido
     public $horaIn;
     public $horaOut;
     public $tiempoEstimado;
-    public $photo;
+    public $photoPath;
 
     public function crearPedido(){
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
@@ -101,6 +101,19 @@ class Pedido
             $consulta->bindValue(':idEmpleadoPreparacion', $pedido->idEmpleadoPreparacion, PDO::PARAM_INT);
             $consulta->bindValue(':estado', $pedido->estado, PDO::PARAM_STR);
             $consulta->bindValue(':horaOut', date('H:i:s'), PDO::PARAM_STR);
+            $consulta->execute();
+    }
+
+    public function SetPhotoPath(){
+
+        $objAccesoDato = AccesoDatos::obtenerInstancia();
+        $consulta = $objAccesoDato->prepararConsulta(
+
+            "UPDATE pedidos SET photoPath = :photoPath WHERE id = :id");
+
+            $consulta->bindValue(':id', $this->id, PDO::PARAM_STR);
+            $consulta->bindValue(':photoPath', $this->photoPath, PDO::PARAM_STR);
+
             $consulta->execute();
     }
 }
