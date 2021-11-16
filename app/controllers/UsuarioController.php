@@ -42,7 +42,7 @@ class UsuarioController extends Usuario implements IApiUsable
   
   public function CargarUno($request, $response, $args)
   {
-        $sectores = ["bartender", "cervecero", "cocinero", "mozo", "socio"];
+        $sectores = ["barra", "cerveceria", "cocina", "mozo", "socio"];
         $flag = false;
 
         $parametros = $request->getParsedBody();

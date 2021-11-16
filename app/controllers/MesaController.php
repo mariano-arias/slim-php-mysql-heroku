@@ -14,7 +14,7 @@ class MesaController extends Mesa implements IApiUsable{
         $mesa = new Mesa();
         $permitted_chars = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ';
         $mesa->id =  substr(str_shuffle($permitted_chars), 0, 5);
-        $mesa->estado = 'esperando';
+        $mesa->estado = 'cerrada';
         $mesa->crearMesa();
         $payload = json_encode(array("mensaje" => "Mesa creada con exito. Mesa Codigo: ". $mesa->id. " - Estado: ".$mesa->estado));
 
@@ -62,16 +62,38 @@ class MesaController extends Mesa implements IApiUsable{
 
         if($flag){
             $aux=Mesa::ObtenerMesaById($mesa);
-            // var_dump($mesa);
-            // var_dump($estado);
-            // var_dump($aux);
+
             if($aux){
                   if($aux->estado!=$estado)
                   {
-                        if(Mesa::modificarMesaEstado($estado, $mesa)){
-                              $payload = json_encode(array("mensaje" => "Mesa estado modificado con exito"));
-                        }else{
-                              $payload = json_encode(array("mensaje" => "Ha habido un error"));
+                        $aux = $request->getHeaderLine('Authorization');
+    
+                        $token = trim(explode('Bearer', $aux)[1]);
+                        
+                        $sectorUser= AuthJWT::ObtenerData($token);
+
+                        switch($estado){
+
+                              case 'cerrada':
+                                    if($sectorUser== 'socio'){
+                                          if(Mesa::modificarMesaEstado($estado, $mesa)){
+                                                $payload = json_encode(array("mensaje" => "Mesa estado modificado con exito"));
+                                          }else{
+                                                $payload = json_encode(array("mensaje" => "Ha habido un error"));
+                                          }
+                                    }else{
+                                          $payload = json_encode(array("mensaje" => "Solo usuario Socio puede cerrar una mesa"));
+                                    }
+                              break;
+                              case 'esperando':
+                              case 'comiendo':
+                              case 'pagando':
+                                    if(Mesa::modificarMesaEstado($estado, $mesa)){
+                                          $payload = json_encode(array("mensaje" => "Mesa estado modificado con exito"));
+                                    }else{
+                                          $payload = json_encode(array("mensaje" => "Ha habido un error"));
+                                    }
+                              break;
                         }
                   }else{
                         $payload = json_encode(array("mensaje" => "Error - La mesa ".$mesa." ya está en estado: ".$estado));

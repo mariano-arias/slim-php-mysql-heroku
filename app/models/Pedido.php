@@ -7,15 +7,16 @@ class Pedido
     public $idMesa;
     public $idMozo;
     public $clienteNombre;
-    public $idProducto; //un array de productos?
+    public $idProducto; //un array de productos
     public $cantidad;
     public $precio;
     public $sector;
     public $idEmpleadoPreparacion;
     public $estado;
+    public $horaIn;
+    public $horaOut;
     public $tiempoEstimado;
-    public $tiempoRealizado;
-    public $foto;
+    public $photo;
 
     public function crearPedido(){
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
@@ -58,28 +59,49 @@ class Pedido
         return $consulta->fetchObject('Pedido');
     }
 
+    public static function obtenerPedidoBySector($sector)
+    {
+        $objAccesoDatos = AccesoDatos::obtenerInstancia();
+        $consulta = $objAccesoDatos->prepararConsulta("SELECT * FROM pedidos WHERE sector like :sector");
+        $consulta->bindValue(':sector', $sector, PDO::PARAM_INT);
+        $consulta->execute();
+
+        return $consulta->fetchAll(PDO::FETCH_CLASS, 'Pedido');
+    }
+
     public static function ModificarUnoById($pedido)
     {
         $objAccesoDato = AccesoDatos::obtenerInstancia();
+        $consulta = $objAccesoDato->prepararConsulta();
+        $consulta->execute();
+    }
 
-        if($pedido->estado == 'en preparacion'){
+    public static function ModificarEnPreparacion($pedido)
+    {
+        $objAccesoDato = AccesoDatos::obtenerInstancia();
+
 
             $consulta = $objAccesoDato->prepararConsulta(
-                "UPDATE pedidos SET idEmpleadoPreparacion = :idEmpleadoPreparacion, estado = :estado, tiempoEstimado = :tiempoEstimado WHERE id = :id");
+                "UPDATE pedidos SET idEmpleadoPreparacion = :idEmpleadoPreparacion, estado = :estado, horaIn = :horaIn, tiempoEstimado = :tiempoEstimado WHERE id = :id");
                 $consulta->bindValue(':id', $pedido->id, PDO::PARAM_STR);
                 $consulta->bindValue(':idEmpleadoPreparacion', $pedido->idEmpleadoPreparacion, PDO::PARAM_INT);
                 $consulta->bindValue(':estado', $pedido->estado, PDO::PARAM_STR);
+                $consulta->bindValue(':horaIn', date('H:i'), PDO::PARAM_STR);
                 $consulta->bindValue(':tiempoEstimado', $pedido->tiempoEstimado, PDO::PARAM_INT);
-        }else if( $pedido->estado == 'listo'){
-            $consulta = $objAccesoDato->prepararConsulta(
-                "UPDATE pedidos SET idEmpleadoPreparacion = :idEmpleadoPreparacion, estado = :estado, tiempoRealizado = :tiempoRealizado WHERE id = :id");
-                $consulta->bindValue(':id', $pedido->id, PDO::PARAM_STR);
-                $consulta->bindValue(':idEmpleadoPreparacion', $pedido->idEmpleadoPreparacion, PDO::PARAM_INT);
-                $consulta->bindValue(':estado', $pedido->estado, PDO::PARAM_STR);
-                $consulta->bindValue(':tiempoRealizado', $pedido->tiempoRealizado, PDO::PARAM_INT);
-        }
                 
                 $consulta->execute();
+    }
+
+    public static function ModificarTerminar($pedido){
+
+        $objAccesoDato = AccesoDatos::obtenerInstancia();
+        $consulta = $objAccesoDato->prepararConsulta(
+            "UPDATE pedidos SET idEmpleadoPreparacion = :idEmpleadoPreparacion, estado = :estado, horaOut = :horaOut WHERE id = :id");
+            $consulta->bindValue(':id', $pedido->id, PDO::PARAM_STR);
+            $consulta->bindValue(':idEmpleadoPreparacion', $pedido->idEmpleadoPreparacion, PDO::PARAM_INT);
+            $consulta->bindValue(':estado', $pedido->estado, PDO::PARAM_STR);
+            $consulta->bindValue(':horaOut', date('H:i:s'), PDO::PARAM_STR);
+            $consulta->execute();
     }
 }
 ?>

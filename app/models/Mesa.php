@@ -44,6 +44,8 @@ class Mesa
     }
 
     public function obtenerMesaById($mesa){
+        var_dump($mesa);
+        
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
         $consulta = $objAccesoDatos->prepararConsulta(
             "SELECT id, estado FROM mesas WHERE id = :id");

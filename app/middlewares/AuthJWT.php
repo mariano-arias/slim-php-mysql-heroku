@@ -57,11 +57,21 @@ class AuthJWT
 
     public static function ObtenerData($token)
     {
+        //echo "obtengo data";
         return JWT::decode(
             $token,
             self::$claveSecreta,
             self::$tipoEncriptacion
         )->sector;
+    }
+
+    public static function ObtenerId($token)
+    {
+        return JWT::decode(
+            $token,
+            self::$claveSecreta,
+            self::$tipoEncriptacion
+        )->id;
     }
 
     private static function Aud()
