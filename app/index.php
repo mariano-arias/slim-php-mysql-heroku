@@ -52,17 +52,21 @@ $app->group('/login', function (RouteCollectorProxy $group){
 })->add(LoggerMW::class . ':LogOperacion');
 
 $app->group('/usuarios', function (RouteCollectorProxy $group) {
+  $group->get('/file', \UsuarioController::class . ':SaveCSV');
     $group->get('/{usuario}', \UsuarioController::class . ':TraerUno');
     $group->get('[/]', \UsuarioController::class . ':TraerTodos');
     $group->post('[/]', \UsuarioController::class . ':CargarUno')->Add(ValidacionMW::class . ':ValidarSocio');
     $group->put('[/]', \UsuarioController::class . ':ModificarUno')->Add(ValidacionMW::class . ':ValidarSocio');
    // $group->delete('/{usuarioId}', \UsuarioController::class . ':BorrarUno')->Add(ValidacionMW::class . ':ValidarSocio');
+
   })->add(ValidacionMW::class . ':ValidarToken');
 
 $app->group('/productos', function (RouteCollectorProxy $group) {
+    $group->post('/file', \ProductoController::class . ':GetCSV');
+    $group->get('/file', \ProductoController::class . ':SaveCSV');
+    $group->post('[/]', \ProductoController::class . ':CargarUno')->Add(ValidacionMW::class . ':ValidarSocio');
     $group->get('[/]', \ProductoController::class . ':TraerTodos');
     $group->get('/{idProducto}', \ProductoController::class . ':TraerUno');
-    $group->post('[/]', \ProductoController::class . ':CargarUno')->Add(ValidacionMW::class . ':ValidarSocio');
     $group->put('[/]', \ProductoController::class . ':ModificarUno')->Add(ValidacionMW::class . ':ValidarSocio');
   })->add(ValidacionMW::class . ':ValidarToken');
 

@@ -105,4 +105,29 @@ class Usuario
 
         return $consulta->fetchObject('Usuario');
     }
+
+    public static function GetAllForCSV()
+    {
+        try{
+
+            $objAccesoDatos = AccesoDatos::obtenerInstancia();
+            $consulta = $objAccesoDatos->prepararConsulta(
+                "SELECT id, usuario, apellido, nombre, sector, estado FROM usuarios");
+                $consulta->execute();
+                
+                return $consulta->fetchAll(PDO::FETCH_CLASS, 'Usuario');
+            }catch(Exception $ex){
+                echo "Se ha producido un error.".$ex->getMessage();
+            }
+    }
+    public static function SaveDataCSV($lista){
+
+        $lista = Usuario::obtenerTodos();
+
+        //set column headers
+        $fields = array('ID', 'Usuario', 'Clave', 'Apellido', 'Nombre', 'Sector', 'Operaciones', 'Estado');
+
+        return FileManager::SaveToCSV($lista, $fields);
+    }
+
 }

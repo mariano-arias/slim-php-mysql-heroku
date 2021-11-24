@@ -3,9 +3,9 @@
 class Producto
 {
     public $id;
-    public $sector;
     public $producto;
     public $precio;
+    public $sector;
 
     public function crearProducto()
     {
@@ -43,6 +43,16 @@ class Producto
         return $consulta->fetchObject('Producto');
     }
 
+    public static function obtenerProductoByName($producto)
+    {
+        $objAccesoDatos = AccesoDatos::obtenerInstancia();
+        $consulta = $objAccesoDatos->prepararConsulta("SELECT id, producto, precio, sector FROM productos WHERE producto LIKE :producto");
+        $consulta->bindValue(':producto', $producto, PDO::PARAM_INT);
+        $consulta->execute();
+
+        return $consulta->fetchObject('Producto');
+    }
+
     public static function ModificarUnoById($producto)
     {
         $objAccesoDato = AccesoDatos::obtenerInstancia();
@@ -65,6 +75,20 @@ class Producto
         $consulta->bindValue(':id', $usuario, PDO::PARAM_INT);
         $consulta->bindValue(':fechaBaja', date_format($fecha, 'Y-m-d H:i:s'));
         $consulta->execute();
+    }
+
+    public static function GetDataCSV($aux){
+
+        return FileManager::GetCSV($aux);
+
+    }
+
+    public static function SaveDataCSV($lista){
+
+        //set column headers
+        $fields = array('ID', 'Producto', 'Precio', 'Sector');
+
+        return FileManager::SaveToCSV($lista, $fields);
     }
 }
 ?>

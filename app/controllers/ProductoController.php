@@ -103,20 +103,94 @@ class ProductoController extends Producto implements IApiUsable{
           ->withHeader('Content-Type', 'application/json');
     }
 
-    public function BorrarUno($request, $response, $args)
-    {
-        $parametros = $request->getParsedBody();
+    public function CargarTodos($array){
 
-        $usuarioId = $parametros['usuarioId'];
-        Usuario::borrarUsuario($usuarioId);
 
-        $payload = json_encode(array("mensaje" => "Usuario borrado con exito"));
 
-        $response->getBody()->write($payload);
-        return $response
-          ->withHeader('Content-Type', 'application/json');
     }
 
+    public function BorrarUno($request, $response, $args)
+    {
+        // $parametros = $request->getParsedBody();
 
+        // $usuarioId = $parametros['usuarioId'];
+        // Usuario::borrarUsuario($usuarioId);
+
+        // $payload = json_encode(array("mensaje" => "Usuario borrado con exito"));
+
+        // $response->getBody()->write($payload);
+        // return $response
+        //   ->withHeader('Content-Type', 'application/json');
+    }
+
+  public function GetCSV($request, $response, $args)
+  {
+
+    if ($_FILES["file"]["error"] > 0) {
+      echo "Error: " . $_FILES["file"]["error"] . "<br />";
+      $payload = json_encode(array("mensaje" => "Error con el archivo"));
+
+      $response->getBody()->write($payload);
+      return $response
+        ->withHeader('Content-Type', 'application/json');
+    } else {
+      $aux = $_FILES['file'];
+
+    //  var_dump($aux);
+      $aux = $aux['tmp_name'];
+      // var_dump($aux);
+      $array = Producto::GetDataCSV($aux);
+
+
+      if( $array != null){
+
+        $p = "Producto Id N° ";
+        $i = 0;
+        
+        foreach ($array as $aux) {
+
+          if($aux != null){
+            
+            $obj = new Producto();
+            
+            $obj->producto = $aux[0];
+            $obj->precio = $aux[1];
+            $obj->sector = $aux[2];
+            
+            $id = $obj->crearProducto();
+            
+            $p .= $id . ", ";
+            $i++;
+          }
+        }
+        
+        $payload = json_encode(array("mensaje" => "Productos incorporados al menu! Sus numeros de identificacion son: " . $p));
+      }else{
+        $payload = json_encode(array("mensaje" => "No se han incorporado productos"));
+      }
+
+      $response->getBody()->write($payload);
+      return $response
+        ->withHeader('Content-Type', 'application/json');
+    }
+  }
+
+  public function SaveCSV($request, $response){
+
+    $lista = Producto::obtenerTodos();
+
+    if(Producto::SaveDataCSV($lista)){
+
+     // $payload = json_encode("Archivo grabado con exito.");
+      
+    }
+    else{
+      $payload = json_encode("Error. No se ha grabado el archivo.");
+    }
+    //$response->getBody()->write($payload);
+    return $response
+    ->withHeader('Content-Type', 'application/json');
+
+  }
 }
 ?>

@@ -174,4 +174,23 @@ var_dump($sector);
         ->withHeader('Content-Type', 'application/json');
 
     }
+
+    
+  public function SaveCSV($request, $response){
+
+    $lista = Usuario::obtenerTodos();
+
+    if(Usuario::SaveDataCSV($lista)){
+
+     // $payload = json_encode("Archivo grabado con exito.");
+      
+    }
+    else{
+      $payload = json_encode("Error. No se ha grabado el archivo.");
+    }
+    //$response->getBody()->write($payload);
+    return $response
+    ->withHeader('Content-Type', 'application/json');
+
+  }
 }
