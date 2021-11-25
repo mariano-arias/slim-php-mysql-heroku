@@ -88,11 +88,15 @@ class MesaController extends Mesa implements IApiUsable{
                               case 'esperando':
                               case 'comiendo':
                               case 'pagando':
-                                    if(Mesa::modificarMesaEstado($estado, $mesa)){
-                                          $payload = json_encode(array("mensaje" => "Mesa estado modificado con exito"));
-                                    }else{
-                                          $payload = json_encode(array("mensaje" => "Ha habido un error"));
-                                    }
+                                          if ($sectorUser == 'mozo') {
+                                                if (Mesa::modificarMesaEstado($estado, $mesa)) {
+                                                      $payload = json_encode(array("mensaje" => "Mesa estado modificado con exito"));
+                                                } else {
+                                                      $payload = json_encode(array("mensaje" => "Ha habido un error"));
+                                                }
+                                          } else {
+                                                $payload = json_encode(array("mensaje" => "Solo usuario Mozo puede realizar esta modificacion"));
+                                          }
                               break;
                         }
                   }else{

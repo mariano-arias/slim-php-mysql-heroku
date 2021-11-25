@@ -69,6 +69,15 @@ class Pedido
         return $consulta->fetchAll(PDO::FETCH_CLASS, 'Pedido');
     }
 
+    public static function obtenerPedidosListos()
+    {
+        $objAccesoDatos = AccesoDatos::obtenerInstancia();
+        $consulta = $objAccesoDatos->prepararConsulta("SELECT * FROM pedidos WHERE estado like 'listo'");
+      //  $consulta->bindValue(':sector', $sector, PDO::PARAM_INT);
+        $consulta->execute();
+
+        return $consulta->fetchAll(PDO::FETCH_CLASS, 'Pedido');
+    }
     public static function ModificarUnoById($pedido)
     {
         $objAccesoDato = AccesoDatos::obtenerInstancia();

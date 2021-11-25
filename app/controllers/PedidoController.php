@@ -72,7 +72,7 @@ class PedidoController extends Pedido implements IApiUsable{
 
           case 'socio':
             $lista = Pedido::obtenerTodos();
-          $payload = json_encode(array("Pedidos: " => $lista));
+            $payload = json_encode(array("Pedidos: " => $lista));
           break;
           case 'barra':
           case 'cerveceria':
@@ -81,7 +81,8 @@ class PedidoController extends Pedido implements IApiUsable{
             $payload = json_encode(array("Pedidos sector: " => $lista));
           break;
           case 'mozo':
-            $payload = json_encode("Funcion no habilitada para mozo");
+            $lista = Pedido::obtenerPedidosListos();
+            $payload = json_encode(array("Pedidos sector: " => $lista));
             break;
         }
 

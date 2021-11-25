@@ -53,6 +53,7 @@ $app->group('/login', function (RouteCollectorProxy $group){
 
 $app->group('/usuarios', function (RouteCollectorProxy $group) {
   $group->get('/file', \UsuarioController::class . ':SaveCSV');
+  $group->post('/borrar', \UsuarioController::class . ':BorrarUno')->Add(ValidacionMW::class . ':ValidarSocio');
     $group->get('/{usuario}', \UsuarioController::class . ':TraerUno');
     $group->get('[/]', \UsuarioController::class . ':TraerTodos');
     $group->post('[/]', \UsuarioController::class . ':CargarUno')->Add(ValidacionMW::class . ':ValidarSocio');
