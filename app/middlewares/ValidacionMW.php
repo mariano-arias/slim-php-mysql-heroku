@@ -58,8 +58,6 @@ class ValidacionMW{
             
             if($user === 'socio'){
                 
-                //echo "dale gas";
-                
                 $response = $handler->handle($request);
                 
                 return $response;
@@ -88,7 +86,6 @@ class ValidacionMW{
     public static function ValidarMozo($request, $handler)
     {
 
-        //echo "entro mozo validar";
         try {
 
             $aux = $request->getHeaderLine('Authorization');
@@ -98,8 +95,6 @@ class ValidacionMW{
             $user = AuthJWT::ObtenerData($token);
 
             if ($user === 'mozo') {
-
-                //echo "Valido mozo";
 
                 $response = $handler->handle($request);
 

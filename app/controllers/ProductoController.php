@@ -82,16 +82,21 @@ class ProductoController extends Producto implements IApiUsable{
     {
         $parametros = $request->getParsedBody();
 
-        if(!empty($parametros['id']) && !empty($parametros['producto']) && !empty($parametros['precio']
-        && $parametros['sector'])){
-          
-          $obj = new Producto();
-          $obj->id = $parametros['id'];
-          $obj->producto = trim($parametros['producto']);
-          $obj->precio = trim($parametros['precio']);
-          $obj->sector =trim($parametros['sector']);
-          
-          Producto::ModificarUnoById($obj);
+        if(isset($parametros['id']) && !empty($parametros['id'])){
+
+          $producto = Producto::obtenerProductoById($parametros['id']);
+
+          if( isset($parametros['producto']) && !empty($parametros['producto'])){
+            $producto->producto=trim($parametros['producto']);
+          }
+          if( isset($parametros['precio']) && !empty($parametros['precio'])){
+            $producto->precio=trim($parametros['precio']);
+          }
+          if( isset($parametros['sector']) && !empty($parametros['sector'])){
+            $producto->sector=trim($parametros['sector']);
+          }
+
+          Producto::ModificarUnoById($producto);
           
           $payload = json_encode(array("mensaje" => "Producto actualizado"));
         }else{
