@@ -24,20 +24,20 @@ class ProductoController extends Producto implements IApiUsable{
 
         if($flag)
         {
-          //if(!Usuario::obtenerUsuarioByUsername(trim($parametros['username'])))
-          //{
-            $usr = new Producto();
+          $aux = Producto::obtenerProductoByName($parametros['producto']);
+          if(!$aux || $aux == null){
 
-            $usr->producto = trim($parametros['producto']);
-            $usr->precio = trim($parametros['precio']);
-            $usr->sector =trim($parametros['sector']);
-            $id = $usr->crearProducto();
+            $p = new Producto();
+            
+            $p->producto = trim($parametros['producto']);
+            $p->precio = trim($parametros['precio']);
+            $p->sector =trim($parametros['sector']);
+            $id = $p->crearProducto();
             $payload = json_encode(array("mensaje" => "Producto incorporado al menu! Su numero de identificacion es: ".$id));
-          // }
-          // else
-          // {
-          //   $payload = json_encode(array("mensaje" => "UserName ya existe, elija otro o ingrese con su pass"));
-          // }
+          }else{
+            $payload = json_encode(array("mensaje" => "Producto ya existe"));
+          }
+
         }
         else
         {
