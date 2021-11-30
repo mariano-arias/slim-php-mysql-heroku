@@ -21,6 +21,8 @@ require_once './controllers/UsuarioController.php';
 require_once './controllers/ProductoController.php';
 require_once './controllers/MesaController.php';
 require_once './controllers/PedidoController.php';
+require_once './controllers/EncuestaController.php';
+require_once './controllers/EstadisticaController.php';
 
 date_default_timezone_set('America/Argentina/Buenos_Aires');
 
@@ -53,12 +55,12 @@ $app->group('/login', function (RouteCollectorProxy $group){
 
 $app->group('/usuarios', function (RouteCollectorProxy $group) {
   $group->get('/file', \UsuarioController::class . ':SaveCSV');
-  $group->post('/borrar', \UsuarioController::class . ':BorrarUno')->Add(ValidacionMW::class . ':ValidarSocio');
+  //$group->post('/borrar', \UsuarioController::class . ':BorrarUno')->Add(ValidacionMW::class . ':ValidarSocio');
     $group->get('/{usuario}', \UsuarioController::class . ':TraerUno');
     $group->get('[/]', \UsuarioController::class . ':TraerTodos');
     $group->post('[/]', \UsuarioController::class . ':CargarUno')->Add(ValidacionMW::class . ':ValidarSocio');
     $group->put('[/]', \UsuarioController::class . ':ModificarUno')->Add(ValidacionMW::class . ':ValidarSocio');
-   // $group->delete('/{usuarioId}', \UsuarioController::class . ':BorrarUno')->Add(ValidacionMW::class . ':ValidarSocio');
+    $group->delete('/{usuarioId}', \UsuarioController::class . ':BorrarUno')->Add(ValidacionMW::class . ':ValidarSocio');
 
   })->add(ValidacionMW::class . ':ValidarToken');
 
@@ -79,8 +81,9 @@ $app->group('/mesas', function (RouteCollectorProxy $group) {
   })->add(ValidacionMW::class . ':ValidarToken');
 
 $app->group('/pedidos', function (RouteCollectorProxy $group) {
-    $group->get('[/]', \PedidoController::class . ':TraerTodos');
+    $group->get('/cliente', \PedidoController::class . ':TraerUnoCliente');
     $group->get('/{pedido}', \PedidoController::class . ':TraerUno');
+    $group->get('[/]', \PedidoController::class . ':TraerTodos');
     $group->post('[/]', \PedidoController::class . ':CargarUno')
       ->Add(ValidacionMW::class . ':ValidarMozo')
       ->Add(ValidacionMW::class . ':ValidarMesa')
@@ -88,7 +91,19 @@ $app->group('/pedidos', function (RouteCollectorProxy $group) {
     $group->put('[/]', \PedidoController::class . ':ModificarUno')->Add(ValidacionMW::class . ':ValidarSector');
   })->add(ValidacionMW::class . ':ValidarToken');
 
+  $app->group('/encuesta', function (RouteCollectorProxy $group) {
+    $group->post('[/]', \EncuestaController::class . ':CargarUno');
+    $group->get('[/]', \EncuestaController::class . ':TraerTodos')->Add(ValidacionMW::class . ':ValidarSocio');
+    })->add(ValidacionMW::class . ':ValidarToken');
 
+    $app->group('/informes', function (RouteCollectorProxy $group) {
+ // $group->post('[/]', \EstadisticaController::class . ':CargarUno');
+      $group->get('/mesas', \EstadisticaController::class . ':TraerTodos');
+      $group->get('/pedidos', \EstadisticaController::class . ':TraerTodos');
+      $group->get('/productos', \EstadisticaController::class . ':TraerTodos');
+      $group->get('/operaciones', \EstadisticaController::class . ':TraerTodos');
+      })->Add(ValidacionMW::class . ':ValidarSocio')->add(ValidacionMW::class . ':ValidarToken');
+    
 $app->addBodyParsingMiddleware();
 
 $app->run();

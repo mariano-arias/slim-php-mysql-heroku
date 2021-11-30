@@ -166,7 +166,7 @@ class ValidacionMW{
         $parametros = $request->getParsedBody();
         $id = $parametros['idMesa'];
 
-        var_dump($id);
+        //var_dump($id);
         $mesa = new Mesa();
         $mesa = $mesa->obtenerMesaById($id);
 
@@ -178,6 +178,7 @@ class ValidacionMW{
                 return $response;
             } else {
                 $mesas = Mesa::obtenerMesaLibre();
+                
                 $payload = json_encode(array("La mesa ya está ocupada. Mesas libres: " => $mesas));
             }
         } else {

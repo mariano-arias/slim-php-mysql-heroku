@@ -28,14 +28,16 @@ class PedidoController extends Pedido implements IApiUsable{
 
         $pedido->crearPedido();
 
-        $mesa = new Mesa();
-        $mesa = $mesa->modificarMesaEstado('esperando', $pedido->idMesa);
-
         if (isset($_FILES["photo"])){
           
           $pedido->photoPath=FileManager::SaveFile($request, $pedido->id);
           $pedido->SetPhotoPath();
         }
+
+
+        $mesa = new Mesa();
+        $mesa = $mesa->modificarMesaEstado('esperando', $pedido->idMesa);
+
 
         $payload = json_encode(array("mensaje" => "Pedido creado con exito. Su Codigo es de pedido es: ".$pedido->id));
 
@@ -46,11 +48,11 @@ class PedidoController extends Pedido implements IApiUsable{
 
     public function TraerUno($request, $response, $args)
     {
-    
-        // Buscamos producto por id
+
         $id = $args['pedido'];
         
         $pedido = Pedido::obtenerPedidoById($id);
+
         $payload = json_encode($pedido);
 
         $response->getBody()->write($payload);
@@ -58,6 +60,18 @@ class PedidoController extends Pedido implements IApiUsable{
           ->withHeader('Content-Type', 'application/json');
     }
 
+    public function TraerUnoCliente($request, $response, $args)
+    {
+        $id=$_GET['pedido'];
+
+        $pedido = Pedido::obtenerPedidoById($id);
+
+        $payload = json_encode(array("Su pedido tiene una demora de: " => $pedido->tiempoEstimado.' minutos.'));
+
+        $response->getBody()->write($payload);
+        return $response
+          ->withHeader('Content-Type', 'application/json');
+    }
     public function TraerTodos($request, $response, $args)
     {
         $aux = $request->getHeaderLine('Authorization');
@@ -95,42 +109,60 @@ class PedidoController extends Pedido implements IApiUsable{
     {
         $parametros = $request->getParsedBody();
 
+        if(isset( $parametros['id']) && isset( $parametros['idEmpleadoPreparacion']) && isset( $parametros['estado']))
+        {
+
         $id = $parametros['id'];
         $idEmpleado = $parametros['idEmpleadoPreparacion'];
         $estado = $parametros['estado'];
-        if(isset( $parametros['tiempoEstimado'])){
-          $tiempoEstimado = $parametros['tiempoEstimado'];
-        }
 
-       $aux = Pedido::obtenerPedidoById($id);
-       //var_dump($aux);
-      
+        if(isset( $parametros['tiempoEstimado'])){
+            $tiempoEstimado = $parametros['tiempoEstimado'];
+          }
+
+        $aux = Pedido::obtenerPedidoById($id);
+         // var_dump($aux);
+          
         if($aux){
 
           if ($aux->estado != $estado){
 
             switch ($estado){
               case 'en preparacion':
-                $aux->idEmpleadoPreparacion = $idEmpleado;
-                $aux->estado = $estado;
-                $aux->tiempoEstimado = $tiempoEstimado;
-                Pedido::ModificarEnPreparacion($aux);
-                break;
+                if($aux->estado == 'En espera'){
+                  $aux->idEmpleadoPreparacion = $idEmpleado;
+                  $aux->estado = $estado;
+                  $aux->tiempoEstimado = $tiempoEstimado;
+                  Pedido::ModificarEnPreparacion($aux);
+                  $payload = json_encode(array("mensaje" => "Pedido modificado con exito"));
+                }else{
+                  $payload = json_encode(array("mensaje" => "Pedido no está en estado 'en espera'"));
+                }
+              break;
               case 'listo':
-                $aux->idEmpleadoPreparacion = $idEmpleado;
-                $aux->estado = $estado;
-                Pedido::ModificarTerminar($aux);
-                break;
-            }
+                if($aux->estado =='en preparacion'){
 
-            $payload = json_encode(array("mensaje" => "Pedido modificado con exito"));
+                  $aux->idEmpleadoPreparacion = $idEmpleado;
+                  $aux->estado = $estado;
+                  Pedido::ModificarTerminar($aux);
+                  $payload = json_encode(array("mensaje" => "Pedido modificado con exito"));
+                }else{
+                  $payload = json_encode(array("mensaje" => "Pedido no está en estado 'en preparacion'"));
+                }
+                break;
+              }
+              
+            }else{
+              $payload = json_encode(array("mensaje" => "Pedido ya está en estado: ".$estado));
+            }
           }else{
-            $payload = json_encode(array("mensaje" => "Pedido ya está en estado: ".$estado));
+            $payload = json_encode(array("mensaje" => "Pedido no encontrado"));
           }
         }else{
-          $payload = json_encode(array("mensaje" => "Pedido no encontrado"));
+          $payload = json_encode(array("mensaje" => "Debe completar todos los datos"));
         }
-        $response->getBody()->write($payload);
+        
+          $response->getBody()->write($payload);
         return $response
           ->withHeader('Content-Type', 'application/json');
       }

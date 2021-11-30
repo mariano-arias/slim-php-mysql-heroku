@@ -55,6 +55,18 @@ class Mesa
         return $consulta->fetchObject('Mesa');
     }
 
+    public static function GetMesaById($mesa){
+        // var_dump($mesa);
+         
+         $objAccesoDatos = AccesoDatos::obtenerInstancia();
+         $consulta = $objAccesoDatos->prepararConsulta(
+             "SELECT id, estado FROM mesas WHERE id = :id");
+         $consulta->bindValue(':id', $mesa, PDO::PARAM_STR);
+         $consulta->execute();
+ 
+         return $consulta->fetchObject('Mesa');
+     }
+
     public static function obtenerMesaLibre(){
         // var_dump($mesa);
          

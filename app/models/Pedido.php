@@ -21,8 +21,8 @@ class Pedido
     public function crearPedido(){
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
         $consulta = $objAccesoDatos->prepararConsulta(
-            "INSERT INTO pedidos (id, fecha, idMesa, idMozo, clienteNombre, idProducto, cantidad, precio, sector, estado ) 
-                VALUES (:id, :fecha, :idMesa, :idMozo, :clienteNombre, :idProducto, :cantidad, :precio, :sector, :estado)");
+            "INSERT INTO pedidos (id, fecha, idMesa, idMozo, clienteNombre, idProducto, cantidad, precio, sector, estado, photoPath ) 
+                VALUES (:id, :fecha, :idMesa, :idMozo, :clienteNombre, :idProducto, :cantidad, :precio, :sector, :estado, :photoPath)");
         $consulta->bindValue(':id', $this->id, PDO::PARAM_STR);
         $fecha = new DateTime(date("d-m-Y"));
         $consulta->bindValue(':fecha', date_format($fecha, 'Y-m-d H:i:s'));
@@ -34,6 +34,7 @@ class Pedido
         $consulta->bindValue(':precio', $this->precio, PDO::PARAM_INT);
         $consulta->bindValue(':sector', $this->sector, PDO::PARAM_STR);
         $consulta->bindValue(':estado', $this->estado, PDO::PARAM_INT);
+        $consulta->bindValue(':photoPath', $this->photoPath, PDO::PARAM_STR);
         $consulta->execute();
 
         return $objAccesoDatos->obtenerUltimoId();
@@ -43,7 +44,7 @@ class Pedido
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
         $consulta = $objAccesoDatos->prepararConsulta(
-            "SELECT * FROM pedidos");
+            "SELECT * FROM pedidos order by fecha desc");
         $consulta->execute();
 
         return $consulta->fetchAll(PDO::FETCH_CLASS, 'Pedido');
@@ -51,9 +52,10 @@ class Pedido
 
         public static function obtenerPedidoById($id)
     {
+
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
         $consulta = $objAccesoDatos->prepararConsulta("SELECT * FROM pedidos WHERE id = :id");
-        $consulta->bindValue(':id', $id, PDO::PARAM_INT);
+        $consulta->bindValue(':id', $id, PDO::PARAM_STR);
         $consulta->execute();
 
         return $consulta->fetchObject('Pedido');
@@ -62,7 +64,7 @@ class Pedido
     public static function obtenerPedidoBySector($sector)
     {
         $objAccesoDatos = AccesoDatos::obtenerInstancia();
-        $consulta = $objAccesoDatos->prepararConsulta("SELECT * FROM pedidos WHERE sector like :sector");
+        $consulta = $objAccesoDatos->prepararConsulta("SELECT * FROM pedidos WHERE sector like :sector order by fecha desc");
         $consulta->bindValue(':sector', $sector, PDO::PARAM_INT);
         $consulta->execute();
 
