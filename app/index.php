@@ -93,8 +93,10 @@ $app->group('/pedidos', function (RouteCollectorProxy $group) {
 
   $app->group('/encuesta', function (RouteCollectorProxy $group) {
     $group->post('[/]', \EncuestaController::class . ':CargarUno');
-    $group->get('[/]', \EncuestaController::class . ':TraerTodos')->Add(ValidacionMW::class . ':ValidarSocio');
-    })->add(ValidacionMW::class . ':ValidarToken');
+    $group->get('[/]', \EncuestaController::class . ':TraerTodos')
+            ->Add(ValidacionMW::class . ':ValidarSocio')
+            ->add(ValidacionMW::class . ':ValidarToken');
+    });
 
     $app->group('/informes', function (RouteCollectorProxy $group) {
  // $group->post('[/]', \EstadisticaController::class . ':CargarUno');
