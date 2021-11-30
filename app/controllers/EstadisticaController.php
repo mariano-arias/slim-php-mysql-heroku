@@ -68,7 +68,7 @@ class EstadisticaController extends Estadistica implements IApiUsable{
     {
         $path = $_SERVER['PATH_INFO']??"";
 
-        var_dump($path);
+        var_dump($request);
         $path =explode('/',$path);
        // echo $path[3];
 
