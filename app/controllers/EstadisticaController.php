@@ -67,6 +67,8 @@ class EstadisticaController extends Estadistica implements IApiUsable{
     public function TraerTodos($request, $response, $args)
     {
         $path = $_SERVER['PATH_INFO']??"";
+
+        var_dump($path);
         $path =explode('/',$path);
        // echo $path[3];
 
