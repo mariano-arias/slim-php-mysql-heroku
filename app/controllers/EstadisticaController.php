@@ -67,6 +67,10 @@ class EstadisticaController extends Estadistica implements IApiUsable{
     public function TraerTodos($request, $response, $args)
     {
         //$path = $_SERVER['PATH_INFO']??"";
+        $parametros = $request->getParsedBody();
+       
+        $usr = $args['empleado'];
+
 
         $path = $_SERVER['REQUEST_URI']??"";
 
@@ -88,6 +92,10 @@ class EstadisticaController extends Estadistica implements IApiUsable{
             case 'productos':
                 $lista = Estadistica::obtenerProductoMasVendido();
                 $payload = json_encode(array("Pedidos mas vendido: " => $lista));
+            break;
+            case 'empleados':
+                $lista = Estadistica::GetEmpleadoLogIn($usr);
+                $payload = json_encode(array("Logins empleado: " => $lista));
             break;
             case 'operaciones':
                 $lista = Estadistica::obteneroperacionesPorSector();

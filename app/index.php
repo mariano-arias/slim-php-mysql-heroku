@@ -104,6 +104,7 @@ $app->group('/pedidos', function (RouteCollectorProxy $group) {
       $group->get('/pedidos', \EstadisticaController::class . ':TraerTodos');
       $group->get('/productos', \EstadisticaController::class . ':TraerTodos');
       $group->get('/operaciones', \EstadisticaController::class . ':TraerTodos');
+      $group->get('/empleados/{empleado}', \EstadisticaController::class . ':TraerTodos');
       })->Add(ValidacionMW::class . ':ValidarSocio')->add(ValidacionMW::class . ':ValidarToken');
     
 $app->addBodyParsingMiddleware();

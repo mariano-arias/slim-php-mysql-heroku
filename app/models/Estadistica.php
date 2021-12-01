@@ -76,6 +76,16 @@ class Estadistica
         return $consulta->fetchAll(PDO::FETCH_OBJ);
     }
     
+    public static function GetEmpleadoLogIn($user)
+    {
+        $objAccesoDatos = AccesoDatos::obtenerInstancia();
+        $consulta = $objAccesoDatos->prepararConsulta(
+            "SELECT * FROM logs WHERE username like  :user");
+            $consulta->bindValue(':user', $user, PDO::PARAM_STR);
+        $consulta->execute();
+
+        return $consulta->fetchAll(PDO::FETCH_OBJ);
+    }
 }
 //SELECT idMesa, COUNT(idMesa) as registros FROM `pedidos` GROUP by idMesa ORDER by registros desc
 ?>
